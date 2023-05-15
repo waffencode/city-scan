@@ -1,0 +1,4 @@
+class infrastructure_object
+{
+
+};

@@ -1,0 +1,4 @@
+class data_interface
+{
+
+};
