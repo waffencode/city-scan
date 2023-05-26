@@ -1,14 +1,23 @@
+#ifndef DATABASE_H
+#define DATABASE_H
+
 #include <string>
+#include <mysqlx/xdevapi.h>
+#include "domain/infrastructure_object.h"
 
 class database
 {
 public:
     database();
+    ~database();
+    void add_object(infrastructure_object& object);
+    void fetch_data();
 
 private:
-    void make_generic_query(std::string);
-    void make_select_query(std::string);
-    void make_insert_query(std::string);
-    void make_update_query(std::string);
-    void make_delete_query(std::string);
+    mysqlx::Collection get_collection();
+    std::string get_insert_string(infrastructure_object& object) const;
+
+    std::unique_ptr<mysqlx::Session> _session;
 };
+
+#endif

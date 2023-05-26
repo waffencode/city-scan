@@ -1,3 +1,6 @@
+#ifndef CLIENT_H
+#define CLIENT_H
+
 #include "database.h"
 
 class client
@@ -9,3 +12,5 @@ public:
 private:
     database* _db;
 };
+
+#endif

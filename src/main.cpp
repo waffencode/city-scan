@@ -2,12 +2,11 @@
 #include <memory>
 
 #include "database.h"
-#include "client.h"
+#include "domain/energy_object.h"
 
-int main(int argc, const char *argv[])
+int main()
 {
 	std::unique_ptr<database> db = std::make_unique<database>();
-	std::unique_ptr<client> cl = std::make_unique<client>(db);
 
-	cl->init();
+	return 0;
 }

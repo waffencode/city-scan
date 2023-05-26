@@ -403,7 +403,8 @@ endif()
 #
 
 set(SRC_LIST 
-    src/main.cpp 
+    src/main.cpp
+    src/database.cpp
 )
 
 add_executable(devapi_test ${SRC_LIST})
