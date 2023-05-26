@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "database.h"
+#include "time_service.h"
 #include "domain/energy_object.h"
 #include "domain/transport_object.h"
 
