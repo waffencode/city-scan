@@ -314,7 +314,7 @@ endif()
 #
 
 if(NOT WIN32)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
 endif()
 
 #
@@ -322,9 +322,9 @@ endif()
 # by Connector/C++.
 #
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-endif()
+#if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+#endif()
 
 # With SunPro we need to build in 64-bit mode
 
@@ -482,3 +482,7 @@ if (NOT libs)
   file(INSTALL ${debug_libs} DESTINATION run)
 endif()
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE debug)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++20")

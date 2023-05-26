@@ -7,11 +7,9 @@ class infrastructure_object
 {
 public:
     std::string name;
-
-    virtual std::string get_data_string()
-    {
-        return "";
-    }
+    std::string type;
+    
+    virtual std::string get_data_string() { return ""; }
 };
 
 #endif 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <format>
 #include "database.h"
 
 static const std::string URL = "mysqlx://root@127.0.0.1";
@@ -23,11 +24,29 @@ mysqlx::Collection database::get_collection()
 
 void database::add_object(infrastructure_object& object)
 {
-    mysqlx::Collection collection = get_collection();
-    mysqlx::Result add = collection.add(get_insert_string(object)).execute();
-    std::list<mysqlx::string> ids = add.getGeneratedIds();
-        for (mysqlx::string id : ids)
-            std::cout << "- added doc with id: " << id << std::endl;
+    try
+    {
+        mysqlx::Collection collection = get_collection();
+        mysqlx::Result add = collection.add(get_insert_string(object)).execute();
+        std::list<mysqlx::string> ids = add.getGeneratedIds();
+            for (mysqlx::string id : ids)
+                std::cout << "- added doc with id: " << id << std::endl;
+    }
+    catch (const mysqlx::Error &err)
+	{
+		std::cout << "ERROR: " << err << std::endl;
+		return;
+	}
+	catch (std::exception &ex)
+	{
+		std::cout << "STD EXCEPTION: " << ex.what() << std::endl;
+		return;
+	}
+	catch (const char *ex)
+	{
+		std::cout << "EXCEPTION: " << ex << std::endl;
+		return;
+	}
 }
 
 void database::fetch_data()
@@ -63,5 +82,6 @@ void database::fetch_data()
 
 std::string database::get_insert_string(infrastructure_object& object) const
 {
-    return R"({ "name": ")" + object.name + R"(", )" + object.get_data_string() + R"( })";
+    std::string data = std::vformat("\"name\": \"{}\", \"type\": \"{}\", {}", std::make_format_args(object.name, object.type, object.get_data_string()));
+    return "{" + data + "}";
 }
