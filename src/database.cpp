@@ -1,5 +1,6 @@
 #include <iostream>
 #include <format>
+
 #include "database.h"
 
 static const std::string URL = "mysqlx://root@127.0.0.1";
@@ -82,6 +83,6 @@ void database::fetch_data()
 
 std::string database::get_insert_string(infrastructure_object& object) const
 {
-    std::string data = std::vformat("\"name\": \"{}\", \"type\": \"{}\", {}", std::make_format_args(object.name, object.type, object.get_data_string()));
+    std::string data = std::vformat("\"name\": \"{}\", \"type\": \"{}\", \"timestamp\": \"{}\", {}", std::make_format_args(object.name, object.type, time_service::get_current_timestamp(), object.get_data_string()));
     return "{" + data + "}";
 }

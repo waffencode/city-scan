@@ -4,6 +4,7 @@
 #include <string>
 #include <mysqlx/xdevapi.h>
 #include "domain/infrastructure_object.h"
+#include "time_service.h"
 
 class database
 {

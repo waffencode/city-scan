@@ -7,7 +7,7 @@
 namespace time_service
 {
     // Формат timestamp: DD.MM.YYYY HH:MM:SS
-    std::string get_current_timestamp()
+    static std::string get_current_timestamp()
     {
         struct tm newtime;
         time_t now = std::time(nullptr);

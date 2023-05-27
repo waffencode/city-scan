@@ -7,7 +7,6 @@
 #include <iomanip>
 
 #include "client.h"
-#include "database.h"
 
 void client::m_show()
 {
