@@ -405,6 +405,7 @@ endif()
 set(SRC_LIST 
     src/main.cpp
     src/database.cpp
+    src/client.cpp
 )
 
 add_executable(devapi_test ${SRC_LIST})
