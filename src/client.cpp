@@ -5,7 +5,7 @@
 #include <thread>
 #include <stdio.h>
 #include <iomanip>
-
+#include <fstream>
 #include "client.h"
 
 void client::m_show()
@@ -16,8 +16,7 @@ void client::m_show()
     std::cout << "\t2 - Добавить новые данные об инфраструктурном объекте" << std::endl; //добавить объект
     std::cout << "\t3 - Редактировать данные об инфраструктурном объекте" << std::endl;//редактировать данные объекта
     std::cout << "\t4 - Стереть данные об инфраструктурном объекте" << std::endl;//удалить данные
-    std::cout << "\t5 - Создать резервную копию данных об инфраструктурном объекте" << std::endl;//экспортировать
-    std::cout << "\t6 - Справка" << std::endl;//справка
+    std::cout << "\t5 - Справка" << std::endl;//справка
     std::cout << "\tESC - Завершить работу программы" << std::endl;
 }
 
@@ -173,6 +172,7 @@ void client::menu()
 
     do
     {
+        _data_interface->request_all();
         system("CLS");
         std::cout << "Database Manager [Version 1.0]" << std::endl << std::endl;
         m_show();
@@ -196,7 +196,7 @@ void client::menu()
                 std::cout << "Database Manager [Version 1.0]" << std::endl;
                 m_clearData();
                 break;
-            case 54:
+            case 53:
                 m_aboutProgram();
                 break;
             case 27://ESC
@@ -209,4 +209,11 @@ void client::menu()
                 break;
         }
     } while(1);
+}
+
+void client::write_link(std::string link)
+{
+    std::ofstream file("links.txt", std::ios::app);
+    file << std::endl << link;
+    file.close();
 }

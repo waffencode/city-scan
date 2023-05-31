@@ -2,11 +2,12 @@
 #define CLIENT_H
 
 #include "database.h"
+#include "data_interface.h"
 
 class client
 {
 public:
-    client(database* db) : _db(db) { }
+    client(database* db, data_interface* di) : _db(db), _data_interface(di) { }
     
     void menu();
     void m_show();
@@ -17,8 +18,11 @@ public:
     void m_addNewData();
     void m_aboutProgram();
 
+    void write_link(std::string link);
+
 private:
     database* _db;
+    data_interface* _data_interface;
 };
 
 #endif

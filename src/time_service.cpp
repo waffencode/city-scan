@@ -1,6 +1,3 @@
-#ifndef TIME_SERVICE_H
-#define TIME_SERVICE_H
-
 #include <string>
 #include <time.h>
 
@@ -10,7 +7,7 @@ namespace time_service
     static std::string get_current_timestamp()
     {
         struct tm newtime;
-        time_t now = std::time(nullptr);
+        time_t now = time(nullptr);
         localtime_s(&newtime, &now);
 
         char s[40];
@@ -25,5 +22,3 @@ namespace time_service
         return timestamp;
     }
 }
-
-#endif

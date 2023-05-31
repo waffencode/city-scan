@@ -4,7 +4,10 @@
 #include <string>
 #include <mysqlx/xdevapi.h>
 #include "domain/infrastructure_object.h"
-#include "time_service.h"
+#include "domain/energy_object.h"
+#include "domain/water_object.h"
+#include "domain/transport_object.h"
+#include "time_service.cpp"
 
 class database
 {
@@ -12,6 +15,7 @@ public:
     database();
     ~database();
     void add_object(infrastructure_object& object);
+    void add_raw_data(std::string data);
     void fetch_data();
 
 private:
