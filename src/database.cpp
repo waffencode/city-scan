@@ -1,9 +1,9 @@
-#include <iostream>
 #include <format>
+#include <iostream>
 
 #include "database.h"
 
-static const std::string URL = "mysqlx://root@127.0.0.1";
+const std::string URL = "mysqlx://root@127.0.0.1";
 
 database::database()
 {
@@ -37,7 +37,7 @@ database::~database()
 
 mysqlx::Collection database::get_collection()
 {
-    mysqlx::Schema sch = _session->getSchema("test");
+    mysqlx::Schema sch = _session->getSchema("test", false);
     return sch.createCollection("c1", true);
 }
 
@@ -46,7 +46,7 @@ void database::add_object(infrastructure_object& object)
     try
     {
         mysqlx::Collection collection = get_collection();
-        mysqlx::Result add = collection.add(get_insert_string(object)).execute();
+        const mysqlx::Result add = collection.add(get_insert_string(object)).execute();
     }
     catch (const mysqlx::Error &err)
 	{
@@ -73,7 +73,7 @@ void database::fetch_data()
         mysqlx::DocResult docs = collection.find().execute();
         for (mysqlx::DbDoc entity : docs)
         {
-            for (mysqlx::Field fld : entity)
+            for (const mysqlx::Field& fld : entity)
             {
                 std::cout << " field `" << fld << "`: " << entity[fld] << std::endl;
             }
@@ -96,18 +96,18 @@ void database::fetch_data()
 	}
 }
 
-void database::add_raw_data(std::string data)
+void database::add_raw_data(const std::string& data)
 {
-	mysqlx::DbDoc entity(data);
+	const mysqlx::DbDoc entity(data);
 
-	std::string type = (std::string)entity["type"];
+	const std::string type(entity["type"]);
 	
 	if (type == "energy")
 	{
 		energy_object temp;
-		temp.name = (std::string)entity["name"];
-		temp.type = type;
-		temp.power_consumption = entity["power_consumption"];
+        temp.name = entity["name"].get<std::string>();
+        temp.type = type;
+        temp.power_consumption = entity["power_consumption"];
 		temp.water_consumption = entity["water_consumption"];
 		temp.wastewater_volume = entity["wastewater_volume"];
 		temp.power_output = entity["power_output"];
@@ -116,7 +116,7 @@ void database::add_raw_data(std::string data)
 	else if (type == "water")
 	{
 		water_object temp;
-		temp.name = (std::string)entity["name"];
+		temp.name = entity["name"].get<std::string>();
 		temp.type = type;
 		temp.power_consumption = entity["power_consumption"];
 		temp.water_consumption = entity["water_consumption"];
@@ -130,19 +130,19 @@ void database::add_raw_data(std::string data)
 	else if (type == "transport")
 	{
 		transport_object temp;
-		temp.name = (std::string)entity["name"];
-		temp.type = type;
+        temp.name = entity["name"].get<std::string>();
+        temp.type = type;
 		temp.power_consumption = entity["power_consumption"];
 		temp.water_consumption = entity["water_consumption"];
 		temp.wastewater_volume = entity["wastewater_volume"];
-		temp.daily_traffic = (int64_t)entity["daily_traffic"];
+		temp.daily_traffic = entity["daily_traffic"].get<int64_t>();
 		temp.average_daily_traffic_intensity = entity["average_daily_traffic_intensity"];
 		add_object(temp);
 	}
 }
 
-std::string database::get_insert_string(infrastructure_object& object) const
+std::string database::get_insert_string(infrastructure_object& object)
 {
-    std::string data = std::vformat("\"name\": \"{}\", \"type\": \"{}\", \"timestamp\": \"{}\", {}", std::make_format_args(object.name, object.type, time_service::get_current_timestamp(), object.get_data_string()));
+    const std::string data = std::vformat(R"("name": "{}", "type": "{}", "timestamp": "{}", {})", std::make_format_args(object.name, object.type, time_service::get_current_timestamp(), object.get_data_string()));
     return "{" + data + "}";
 }

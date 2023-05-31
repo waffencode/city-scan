@@ -11,7 +11,6 @@ set(SRC_LIST
     src/database.cpp
     src/client.cpp
     src/data_interface.cpp
-    src/time_service.cpp
 )
 
 add_executable(city-scan ${SRC_LIST})
