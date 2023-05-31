@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "database.h"
+#include "time_service.h"
 
 const std::string URL = "mysqlx://root@127.0.0.1";
 
@@ -65,34 +66,53 @@ void database::add_object(infrastructure_object& object)
 	}
 }
 
-void database::fetch_data()
+mysqlx::DocResult database::fetch_data()
 {
     try
     {
         mysqlx::Collection collection = get_collection();
         mysqlx::DocResult docs = collection.find().execute();
-        for (mysqlx::DbDoc entity : docs)
-        {
-            for (const mysqlx::Field& fld : entity)
-            {
-                std::cout << " field `" << fld << "`: " << entity[fld] << std::endl;
-            }
-        }
+        return docs;
     }
     catch (const mysqlx::Error &err)
 	{
 		std::cout << "ERROR: " << err << std::endl;
-		return;
+		return mysqlx::DocResult();
 	}
 	catch (std::exception &ex)
 	{
 		std::cout << "STD EXCEPTION: " << ex.what() << std::endl;
-		return;
+		return mysqlx::DocResult();
 	}
 	catch (const char *ex)
 	{
 		std::cout << "EXCEPTION: " << ex << std::endl;
-		return;
+		return mysqlx::DocResult();
+	}
+}
+
+mysqlx::DocResult database::fetch_data(std::string query)
+{
+    try
+    {
+        mysqlx::Collection collection = get_collection();
+        mysqlx::DocResult docs = collection.find(query).execute();
+        return docs;
+    }
+    catch (const mysqlx::Error &err)
+	{
+		std::cout << "ERROR: " << err << std::endl;
+		return mysqlx::DocResult();
+	}
+	catch (std::exception &ex)
+	{
+		std::cout << "STD EXCEPTION: " << ex.what() << std::endl;
+		return mysqlx::DocResult();
+	}
+	catch (const char *ex)
+	{
+		std::cout << "EXCEPTION: " << ex << std::endl;
+		return mysqlx::DocResult();
 	}
 }
 

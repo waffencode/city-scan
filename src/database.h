@@ -8,7 +8,6 @@
 #include "domain/energy_object.h"
 #include "domain/water_object.h"
 #include "domain/transport_object.h"
-#include "time_service.h"
 
 class database
 {
@@ -17,7 +16,8 @@ public:
     ~database();
     void add_object(infrastructure_object& object);
     void add_raw_data(const std::string& data);
-    void fetch_data();
+    mysqlx::DocResult fetch_data();
+    mysqlx::DocResult fetch_data(std::string query);
 
 private:
     mysqlx::Collection get_collection();

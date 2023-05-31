@@ -11,7 +11,6 @@ public:
     
     void menu();
     void m_show();
-    void m_editData();
     void m_clearData();
     void m_offer();
     void m_showDatabase();

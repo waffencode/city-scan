@@ -1,8 +1,6 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
-#include <chrono>
-#include <thread>
 #include <stdio.h>
 #include <iomanip>
 #include <fstream>
@@ -12,34 +10,17 @@ void client::m_show()
 {
     SetConsoleTitle("Database Manager - ScanCity");
     std::cout << "Выберите действие, введя соответствующее число:" << std::endl;
-    std::cout << "\t1 - Вывести данные об инфраструктурных объектах" << std::endl; //вывести данные
-    std::cout << "\t2 - Добавить новые данные об инфраструктурном объекте" << std::endl; //добавить объект
-    std::cout << "\t3 - Редактировать данные об инфраструктурном объекте" << std::endl;//редактировать данные объекта
-    std::cout << "\t4 - Стереть данные об инфраструктурном объекте" << std::endl;//удалить данные
-    std::cout << "\t5 - Справка" << std::endl;//справка
+    std::cout << "\t1 - Вывести данные об инфраструктурных объектах" << std::endl;
+    std::cout << "\t2 - Добавить новые данные об инфраструктурном объекте" << std::endl;
+    std::cout << "\t3 - Стереть данные об инфраструктурном объекте" << std::endl;
+    std::cout << "\t4 - Справка" << std::endl;
     std::cout << "\tESC - Завершить работу программы" << std::endl;
-}
-
-void client::m_editData()
-{
-    char key;
-    std::cout << "\nВведите ключ (чтобы вернуться назад, нажмите ESC):" << std::endl; //у каждого типа свои поля
-    key = _getch();
-    if ((int)key == 27) 
-    {
-        return;
-    }
-    else 
-    {
-        std::cout << "\nЗДЕСЬ НАДО НАПИСАТЬ ФУНКЦИЮ ДЛЯ РЕДАКТИРОВАНИЯ ПО КЛЮЧУ" << std::endl;
-        _getch();
-    }
 }
 
 void client::m_clearData()
 {
     char key;
-    std::cout << "\nВведите ключ (чтобы вернуться назад, нажмите ESC):" << std::endl; //у каждого типа свои поля
+    std::cout << "\nВведите ключ (чтобы вернуться назад, нажмите ESC):" << std::endl;
     key = _getch();
     if ((int)key == 27) 
     {
@@ -47,29 +28,41 @@ void client::m_clearData()
     }
     else 
     {
-        std::cout << "\nЗДЕСЬ НАДО НАПИСАТЬ ФУНКЦИЮ ДЛЯ УДАЛЕНИЯ ПО КЛЮЧУ" << std::endl;
-        _getch();
+        std::vector<std::string> links = _data_interface->read_link();
+        size_t i = 0;
+        for (const auto& link : links)
+        {
+            std::cout << "[" << ++i << "] " << link << std::endl; 
+        }
+
+        std::cout << "\n\t Введите номер ссылки для удаления её из списка отслеживаемых узлов" << std::endl;
+
+        std::cin >> i;
+        if (i <= links.size())
+        {
+            std::ofstream ofs;
+            ofs.open("links.txt", std::ofstream::out | std::ofstream::trunc);
+            ofs.close();
+
+            links.erase(links.begin() + i - 1);
+            for (const auto& link : links)
+            {
+                write_link(link);
+            }
+        }
+
+        return;
     }
 }
 
 void client::m_offer()
-{ //редактировать, удалить
+{
     char desicion;
-    std::cout << "\nХотите редактировать или удалить запись?\n";
-    std::cout << "\t1 - Редактировать" << std::endl;
-    std::cout << "\t2 - Удалить" << std::endl;
-    std::cout << "\tЛюбой другой символ - Выход в меню" << std::endl;
+    std::cout << "\tДля выхода введите любой символ" << std::endl;
     desicion = _getch();
     switch (desicion)
     {
-        case 49://1
-            m_editData(); //редактирование по ключу
-            return;
-        case 50:
-            m_clearData();//удаление по ключу
-            return;
-        default:          //выход в меню
-            return;
+        default: return;
     }
 }
 
@@ -90,21 +83,49 @@ void client::m_showDatabase()
         switch (desicion)
         {
             case 49://1
-                std::cout << "ЗДЕСЬ НАДО НАПИСАТЬ ФУНКЦИЮ ДЛЯ ВЫВОДА ВСЕХ ДАННЫХ" << std::endl;
+            {
+                std::cout << "Отслеживаемые объекты:" << std::endl;
+                auto docs = _db->fetch_data();
+                for (auto doc : docs)
+                {
+                    std::cout << "Объект: " << doc["name"] << "; Время записи: " << doc["timestamp"] << std::endl;
+                }
                 m_offer();
                 return;
+            }
             case 50:
-                std::cout << "ЗДЕСЬ НАДО НАПИСАТЬ ФУНКЦИЮ ДЛЯ ВЫВОДА ДАННЫХ О ТРАНСПОРТЕ" << std::endl;
+            {
+                std::cout << "Отслеживаемые объекты транспорта:" << std::endl;
+                auto docs = _db->fetch_data("type like 'transport'");
+                for (auto doc : docs)
+                {
+                    std::cout << "Объект: " << doc["name"] << "; Время записи: " << doc["timestamp"] << std::endl;
+                }
                 m_offer();
                 return;
+            }
             case 51:
-                std::cout << "ЗДЕСЬ НАДО НАПИСАТЬ ФУНКЦИЮ ДЛЯ ВЫВОДА ДАННЫХ О ВОДОСНАБЖЕНИИ" << std::endl;
+            {
+                std::cout << "Отслеживаемые объекты водоснабжения:" << std::endl;
+                auto docs = _db->fetch_data("type like 'water'");
+                for (auto doc : docs)
+                {
+                    std::cout << "Объект: " << doc["name"] << "; Время записи: " << doc["timestamp"] << std::endl;
+                }
                 m_offer();
                 return;
+            }
             case 52:
-                std::cout << "ЗДЕСЬ НАДО НАПИСАТЬ ФУНКЦИЮ ДЛЯ ВЫВОДА ДАННЫХ ОБ ЭЛЕКТРОСНАБЖЕНИИ" << std::endl;
+            {
+                std::cout << "Отслеживаемые объекты энергетической инфраструктуры:" << std::endl;
+                auto docs = _db->fetch_data("type like 'energy'");
+                for (auto doc : docs)
+                {
+                    std::cout << "Объект: " << doc["name"] << "; Время записи: " << doc["timestamp"] << std::endl;
+                }
                 m_offer();
                 return;
+            }
             case 27://ESC
                 return;
             default:
@@ -118,33 +139,23 @@ void client::m_addNewData()
     system("CLS");
     std::cout << "Database Manager [Version 1.0]" << std::endl << std::endl;
     char desicion;
-    std::cout << "Выберите тип объекта:" << std::endl; //у каждого типа свои поля
-    std::cout << "\t1 - Объект транспортной системы" << std::endl;
-    std::cout << "\t2 - Объект системы водоснабжения" << std::endl;
-    std::cout << "\t3 - Объект системы электроснабжения" << std::endl;
-    std::cout << "\t4 - Другое" << std::endl;
+    std::cout << "Выберите действие:" << std::endl;
+    std::cout << "\t1 - Ввести ссылку на endpoint API инфраструктурного объекта" << std::endl;
     std::cout << "\tESC - Вернуться в начало" << std::endl << std::endl;
     do
     {
         desicion = _getch();
         switch (desicion)
         {
-            case 49://1 транспортная
-                std::cout << "ЗДЕСЬ НАДО НАПИСАТЬ ФУНКЦИЮ ДЛЯ ДОБАВЛЕНИЯ ДАННЫХ О ТРАНСПОРТЕ" << std::endl;
-                //return; //раскомментировать, когда будет написана функция
-                break;
-            case 50:// водоснабжение
-                std::cout << "ЗДЕСЬ НАДО НАПИСАТЬ ФУНКЦИЮ ДЛЯ ДОБАВЛЕНИЯ ДАННЫХ О ВОДОСНАБЖЕНИИ" << std::endl;
-                //return; //раскомментировать, когда будет написана функция
-                break;
-            case 51:// электроснабжение
-                std::cout << "ЗДЕСЬ НАДО НАПИСАТЬ ФУНКЦИЮ ДЛЯ ДОБАВЛЕНИЯ ДАННЫХ ОБ ЭЛЕКТРОСНАБЖЕНИИ" << std::endl;
-                //return; //раскомментировать, когда будет написана функция
-                break;
-            case 52:// Другое (например, добавление нового типа)
-                std::cout << "ЗДЕСЬ НАДО НАПИСАТЬ ФУНКЦИЮ ДЛЯ ДОБАВЛЕНИЯ ЧЕГО-НИБУДЬ" << std::endl;
-                //return; //раскомментировать, когда будет написана функция
-                break;
+            case 49:
+            {
+                std::cout << "\t Введите ссылку на endpoint API инфраструктурного объекта:" << std::endl;
+                
+                std::string link;
+                std::cin >> link;
+                write_link(link);
+                return;
+            }
             case 27://0
                 return;
             default:
@@ -189,14 +200,9 @@ void client::menu()
             case 51:
                 system("CLS");
                 std::cout << "Database Manager [Version 1.0]" << std::endl;
-                m_editData();
-                break;
-            case 52:
-                system("CLS");
-                std::cout << "Database Manager [Version 1.0]" << std::endl;
                 m_clearData();
                 break;
-            case 53:
+            case 52:
                 m_aboutProgram();
                 break;
             case 27://ESC
