@@ -50,8 +50,9 @@ std::vector<std::string> data_interface::read_link()
 {
     std::vector<std::string> links;
     std::string link;
-    std::ifstream file("links.txt");
-    
+    std::ifstream file;
+    file.open("links.txt", std::ifstream::in);
+
     while (file >> link) 
     {
         links.push_back(link);

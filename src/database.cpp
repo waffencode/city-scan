@@ -47,9 +47,6 @@ void database::add_object(infrastructure_object& object)
     {
         mysqlx::Collection collection = get_collection();
         mysqlx::Result add = collection.add(get_insert_string(object)).execute();
-        std::list<mysqlx::string> ids = add.getGeneratedIds();
-            for (mysqlx::string id : ids)
-                std::cout << "- added doc with id: " << id << std::endl;
     }
     catch (const mysqlx::Error &err)
 	{
@@ -102,10 +99,6 @@ void database::fetch_data()
 void database::add_raw_data(std::string data)
 {
 	mysqlx::DbDoc entity(data);
-	for (mysqlx::Field fld : entity)
-	{
-		std::cout << " field `" << fld << "`: " << entity[fld] << std::endl;
-	}
 
 	std::string type = (std::string)entity["type"];
 	
