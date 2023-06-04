@@ -8,7 +8,7 @@ class transport_object : public infrastructure_object
 public:
     transport_object() { type = "transport"; }
 
-    double power_consumption;
+    double power_consumption;   
     double water_consumption;
     double wastewater_volume;
 
